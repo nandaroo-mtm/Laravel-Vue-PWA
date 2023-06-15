@@ -24,7 +24,7 @@
         </div>
       </div>
       <div v-for="p in posts" :key="p.id">
-        <post :post="p" class="mb-4" />
+        <post :post="p" class="mb-4" @post-deleted="postDeleted" />
       </div>
     </div>
   </div>
@@ -32,7 +32,7 @@
 
 <script>
 import { reactive, toRefs, onMounted } from "vue";
-// import axios from "axios";
+import axios from "axios";
 import Post from "./post.vue";
 
 export default {
@@ -45,32 +45,24 @@ export default {
       posts: [],
     });
 
+    const postDeleted = id => {
+      console.log('postDeleted', id);
+      state.posts = state.posts.filter(p => p.id !== id)
+    }
+
     onMounted(() => {
-      state.posts = [
-        {
-          id: 1,
-          title: "post title 1",
-          content: `While its not recommended, you can use this mode inside Browser applications 
-          but note there will be no history, meaning you wont be able to go`,
-        },
-        {
-          id: 2,
-          title: "post title 2",
-          content: `Remember, Firefox and Safari don’t support PWAs on desktop. iOS also 
-          restricts some PWA features, but PWAs should still be installable on iOS. Here are th`,
-        },
-      ];
-      //   axios.get("/api/posts").then((response) => {
-      //     state.posts = response.data;
-      //     response.data.map((p) => {
-      //       p.image_data = JSON.parse(p.image_data);
-      //     });
-      //     state.posts = response.data;
-      //   });
+        axios.get("/posts").then((response) => {
+          if(response.status === 200) {
+            state.posts = response.data;
+            console.log(response.data);
+          }
+        });
     });
 
     return {
       ...toRefs(state),
+
+      postDeleted
     };
   },
 };

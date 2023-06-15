@@ -67,30 +67,27 @@ export default {
     const router = useRouter();
 
     const createPost = () => {
-      const headers = { "Content-Type": "multipart/form-data" };
+      console.log('createPost state.post', state.post)
+      // const headers = { "Content-Type": "multipart/form-data" };
 
       axios
-        .post("/api/posts", { post: state.post }, { headers })
-        .then((response) => {
-          if (response.status === 201) {
+        .post("/posts", state.post )
+        .then(() => {
             router.push({ name: "post-list" });
-          } else {
-            state.errors = response.data;
-          }
+        }).catch((err) => {
+          state.errors = err.response.data.errors;
         });
     };
 
     const editPost = () => {
-      const headers = { "Content-Type": "multipart/form-data" };
+      // const headers = { "Content-Type": "multipart/form-data" };
 
       axios
-        .put(`/api/posts/${state.post.id}`, { post: state.post }, { headers })
-        .then((response) => {
-          if (response.data.status === 422) {
-            state.errors = response.data.errors;
-          } else {
-            router.push({ name: "post-list" });
-          }
+        .put(`/posts/${state.post.id}`, state.post)
+        .then(() => {
+          router.push({ name: "post-list" });
+        }).catch((err) => {
+          state.errors = err.response.data.errors;
         });
     };
 
@@ -99,17 +96,15 @@ export default {
       const id = route.params.id;
 
       if (id) {
-        state.post = {
-          id: 2,
-          title: "post title 2",
-          content: `Remember, Firefox and Safari don’t support PWAs on desktop. iOS also 
-          restricts some PWA features, but PWAs should still be installable on iOS. Here are th`,
-        };
-        // axios.get(`/api/posts/${id}`).then((response) => {
-        //   state.post = response.data;
-        //   state.post.image_data = JSON.parse(response.data.image_data);
-        //   state.image_url = `http://localhost:3000/uploads/${state.post.image_data.id}`;
-        // });
+        // state.post = {
+        //   id: 2,
+        //   title: "post title 2",
+        //   content: `Remember, Firefox and Safari don’t support PWAs on desktop. iOS also 
+        //   restricts some PWA features, but PWAs should still be installable on iOS. Here are th`,
+        // };
+        axios.get(`/posts/${id}`).then((response) => {
+          state.post = response.data;
+        });
         state.isEdit = true;
       }
     });

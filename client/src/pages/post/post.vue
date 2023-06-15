@@ -26,9 +26,24 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: "Post",
   props: ["post"],
+  setup(props,ctx) {
+    const deletePost = () => {
+      if(confirm("Are you sure to delete?")) {
+        axios.delete(`/posts/${props.post.id}`).then(() => {
+          ctx.emit("post-deleted", props.post.id)
+        });
+      }
+    };
+
+    return {
+      deletePost
+    }
+  }
 };
 </script>
 
