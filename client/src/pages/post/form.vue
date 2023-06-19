@@ -69,7 +69,7 @@ export default {
     const createPost = () => {
       console.log('createPost state.post', state.post)
       // const headers = { "Content-Type": "multipart/form-data" };
-
+      console.log('is onLine', window.navigator.onLine);
       axios
         .post("/posts", state.post )
         .then(() => {

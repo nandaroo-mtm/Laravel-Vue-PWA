@@ -5,7 +5,6 @@ const API_CACHE_NAME = "api-cache";
 const API_URLS = ["/api/posts"];
 
 self.addEventListener("install", (event) => {
-  console.log('install')
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(["/", "/index.html", "/manifest.json"]);
@@ -33,7 +32,8 @@ self.addEventListener("fetch", (event) => {
   // Check if the request is an API request
   if (API_URLS.some((url) => request.url.includes(url))) {
     event.respondWith(fetchAndCache(request));
-  } else {
+  } 
+  else {
     event.respondWith(cacheFirst(request));
   }
 });

@@ -55,7 +55,6 @@ export default {
         .then((response) => {
           if (response.status === 200) {
             state.posts = response.data;
-            localStorage.setItem("posts", JSON.stringify(response.data));
           }
         })
         .catch((err) => {
