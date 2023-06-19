@@ -1,4 +1,4 @@
-# client
+# vuejs-pwa
 
 ## Project setup
 ```

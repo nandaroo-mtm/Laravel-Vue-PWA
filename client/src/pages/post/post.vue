@@ -15,6 +15,11 @@
             </svg>
           </span>
           <router-link
+            :to="{ name: 'post-detail', params: { id: post.id } }"
+            class="me-3"
+            >Detail</router-link
+          >
+          <router-link
             :to="{ name: 'post-edit', params: { id: post.id } }"
             class="me-3"
             >Edit post</router-link

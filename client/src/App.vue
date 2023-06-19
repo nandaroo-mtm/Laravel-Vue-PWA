@@ -11,7 +11,6 @@
 
 <script>
 import HeaderBar from "./components/HeaderBar.vue";
-// import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: "App",

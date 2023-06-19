@@ -10,7 +10,7 @@
       >
         <ul class="navbar-nav">
           <li>
-            <router-link to="/posts" class="nav-link">Posts</router-link>
+            <router-link :to="{name: 'post-list'}" class="nav-link">Posts</router-link>
           </li>
         </ul>
       </div>

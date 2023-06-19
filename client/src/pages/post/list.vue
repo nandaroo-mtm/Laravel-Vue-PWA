@@ -45,24 +45,28 @@ export default {
       posts: [],
     });
 
-    const postDeleted = id => {
-      console.log('postDeleted', id);
-      state.posts = state.posts.filter(p => p.id !== id)
-    }
+    const postDeleted = (id) => {
+      state.posts = state.posts.filter((p) => p.id !== id);
+    };
 
     onMounted(() => {
-        axios.get("/posts").then((response) => {
-          if(response.status === 200) {
+      axios
+        .get("/posts")
+        .then((response) => {
+          if (response.status === 200) {
             state.posts = response.data;
-            console.log(response.data);
+            localStorage.setItem("posts", JSON.stringify(response.data));
           }
+        })
+        .catch((err) => {
+          console.log("post", err);
         });
     });
 
     return {
       ...toRefs(state),
 
-      postDeleted
+      postDeleted,
     };
   },
 };
