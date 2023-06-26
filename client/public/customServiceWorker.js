@@ -1,4 +1,3 @@
-
 const CACHE_NAME = "my-cache";
 const API_CACHE_NAME = "api-cache";
 
@@ -32,8 +31,7 @@ self.addEventListener("fetch", (event) => {
   // Check if the request is an API request
   if (API_URLS.some((url) => request.url.includes(url))) {
     event.respondWith(fetchAndCache(request));
-  } 
-  else {
+  } else {
     event.respondWith(cacheFirst(request));
   }
 });

@@ -51,6 +51,7 @@
 import { onMounted, reactive, toRefs } from "vue";
 import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
+import Swal from "sweetalert2";
 
 export default {
   setup() {
@@ -67,28 +68,33 @@ export default {
     const router = useRouter();
 
     const createPost = () => {
-      console.log('createPost state.post', state.post)
-      // const headers = { "Content-Type": "multipart/form-data" };
-      console.log('is onLine', window.navigator.onLine);
-      axios
-        .post("/posts", state.post )
-        .then(() => {
+      if (window.navigator.onLine) {
+        axios
+          .post("/posts", state.post)
+          .then(() => {
             router.push({ name: "post-list" });
-        }).catch((err) => {
-          state.errors = err.response.data.errors;
-        });
+          })
+          .catch((err) => {
+            state.errors = err.response.data.errors;
+          });
+      } else {
+        Swal.fire("The Internet?", "That thing is still around?", "question");
+      }
     };
 
     const editPost = () => {
-      // const headers = { "Content-Type": "multipart/form-data" };
-
-      axios
-        .put(`/posts/${state.post.id}`, state.post)
-        .then(() => {
-          router.push({ name: "post-list" });
-        }).catch((err) => {
-          state.errors = err.response.data.errors;
-        });
+      if (window.navigator.onLine) {
+        axios
+          .put(`/posts/${state.post.id}`, state.post)
+          .then(() => {
+            router.push({ name: "post-list" });
+          })
+          .catch((err) => {
+            state.errors = err.response.data.errors;
+          });
+      } else {
+        Swal.fire("The Internet?", "That thing is still around?", "question");
+      }
     };
 
     onMounted(() => {
@@ -96,12 +102,6 @@ export default {
       const id = route.params.id;
 
       if (id) {
-        // state.post = {
-        //   id: 2,
-        //   title: "post title 2",
-        //   content: `Remember, Firefox and Safari don’t support PWAs on desktop. iOS also 
-        //   restricts some PWA features, but PWAs should still be installable on iOS. Here are th`,
-        // };
         axios.get(`/posts/${id}`).then((response) => {
           state.post = response.data;
         });
