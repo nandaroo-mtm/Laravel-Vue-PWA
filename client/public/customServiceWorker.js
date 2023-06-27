@@ -1,7 +1,7 @@
 const CACHE_NAME = "my-cache";
 const API_CACHE_NAME = "api-cache";
 
-const API_URLS = ["/api/posts"];
+// const API_URLS = ["/api/posts"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -26,33 +26,44 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  const { request } = event;
+  if (navigator.onLine) {
+    return fetch(event.request)
+      .then((networkResponse) => {
+        // Clone the network response to cache it
+        const clonedResponse = networkResponse.clone();
 
-  // Check if the request is an API request
-  if (API_URLS.some((url) => request.url.includes(url))) {
-    event.respondWith(fetchAndCache(request));
+        caches.open(API_CACHE_NAME).then((cache) => {
+          // Cache the response for future use
+          cache.put(event.request, clonedResponse);
+        });
+        return networkResponse;
+      })
+      .catch((error) => {
+        // Handle fetch errors
+        console.log("Error:", error);
+      });
   } else {
-    event.respondWith(cacheFirst(request));
+    event.respondWith(
+      caches
+        .match(event.request)
+        .then((response) => {
+          if (response) {
+            // Serve the request from cache
+            return response;
+          } else {
+            self.clients.matchAll().then((clients) => {
+              clients.forEach((client) => {
+                client.postMessage({ action: "showOfflineAlert" });
+              });
+            });
+          }
+        })
+        .catch((error) => {
+          console.log("error");
+          // Handle cache match errors
+          console.error("Error:", error);
+        })
+    );
   }
 });
 
-async function fetchAndCache(request) {
-  const cache = await caches.open(API_CACHE_NAME);
-
-  try {
-    const response = await fetch(request);
-    cache.put(request, response.clone());
-    return response;
-  } catch (error) {
-    const cachedResponse = await cache.match(request);
-    return (
-      cachedResponse ||
-      new Response(null, { status: 404, statusText: "Not found" })
-    );
-  }
-}
-
-async function cacheFirst(request) {
-  const cacheResponse = await caches.match(request);
-  return cacheResponse || fetch(request);
-}
