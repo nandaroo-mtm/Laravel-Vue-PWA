@@ -52,6 +52,7 @@ import { onMounted, reactive, toRefs } from "vue";
 import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
 import Swal from "sweetalert2";
+import { sendNotification } from "../../../public/js/firebase_utils";
 
 export default {
   setup() {
@@ -72,6 +73,11 @@ export default {
         axios
           .post("/posts", state.post)
           .then(() => {
+            let message = {
+              title: "Created Message",
+              body: "The new post has been created!",
+            };
+            sendNotification(message);
             router.push({ name: "post-list" });
           })
           .catch((err) => {

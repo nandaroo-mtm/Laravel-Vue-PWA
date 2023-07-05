@@ -59,7 +59,6 @@ self.addEventListener("fetch", (event) => {
           }
         })
         .catch((error) => {
-          console.log("error");
           // Handle cache match errors
           console.error("Error:", error);
         })

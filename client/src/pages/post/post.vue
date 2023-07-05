@@ -45,14 +45,21 @@
 
 <script>
 import axios from "axios";
+import { sendNotification } from "../../../public/js/firebase_utils";
 
 export default {
   name: "Post",
   props: ["post"],
   setup(props, ctx) {
+    //props,ctx
     const deletePost = () => {
       if (confirm("Are you sure to delete?")) {
         axios.delete(`/posts/${props.post.id}`).then(() => {
+          let message = {
+            title: props.post.title,
+            body: "This post has been deleted!"
+          };
+          sendNotification(message);
           ctx.emit("post-deleted", props.post.id);
         });
       }
