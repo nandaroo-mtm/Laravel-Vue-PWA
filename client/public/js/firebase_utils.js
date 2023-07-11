@@ -26,7 +26,7 @@ const sendNotification = async (message) => {
   };
 
   try {
-    const response = await axios.post(
+    await axios.post(
       "https://fcm.googleapis.com/fcm/send",
       notificationPayload,
       {
@@ -36,7 +36,6 @@ const sendNotification = async (message) => {
         },
       }
     );
-    console.log("Push notification sent successfully:", response.data);
   } catch (error) {
     console.log("Error sending push notification:", error);
   }

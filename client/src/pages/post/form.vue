@@ -51,7 +51,6 @@
 import { onMounted, reactive, toRefs } from "vue";
 import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
-import Swal from "sweetalert2";
 import { sendNotification } from "../../../public/js/firebase_utils";
 
 export default {
@@ -69,38 +68,39 @@ export default {
     const router = useRouter();
 
     const createPost = () => {
-      if (window.navigator.onLine) {
-        axios
-          .post("/posts", state.post)
-          .then(() => {
-            let message = {
-              title: "Created Message",
-              body: "The new post has been created!",
-            };
-            sendNotification(message);
-            router.push({ name: "post-list" });
-          })
-          .catch((err) => {
+      axios
+        .post("/posts", state.post)
+        .then(() => {
+          let message = {
+            title: "Created Message",
+            body: "The new post has been created!",
+          };
+          sendNotification(message);
+          router.push({ name: "post-list" });
+        })
+        .catch((err) => {
+          if (err.code !== "ERR_NETWORK") {
             state.errors = err.response.data.errors;
-          });
-      } else {
-        Swal.fire("The Internet?", "That thing is still around?", "question");
-      }
+          }
+        });
     };
 
     const editPost = () => {
-      if (window.navigator.onLine) {
-        axios
-          .put(`/posts/${state.post.id}`, state.post)
-          .then(() => {
-            router.push({ name: "post-list" });
-          })
-          .catch((err) => {
+      axios
+        .put(`/posts/${state.post.id}`, state.post)
+        .then(() => {
+          let message = {
+            title: "Updated Message",
+            body: "The selected post has been updated!",
+          };
+          sendNotification(message);
+          router.push({ name: "post-list" });
+        })
+        .catch((err) => {
+          if (err.code !== "ERR_NETWORK") {
             state.errors = err.response.data.errors;
-          });
-      } else {
-        Swal.fire("The Internet?", "That thing is still around?", "question");
-      }
+          }
+        });
     };
 
     onMounted(() => {
@@ -113,6 +113,12 @@ export default {
         });
         state.isEdit = true;
       }
+
+      window.navigator.serviceWorker.addEventListener("message", (event) => {
+        if (event.data.action === "showPostList") {
+          router.push({ name: "post-list" });
+        }
+      });
     });
 
     return {

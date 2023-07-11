@@ -49,7 +49,7 @@ export default {
       state.posts = state.posts.filter((p) => p.id !== id);
     };
 
-    onMounted(() => {
+    const getPostList = () => {
       axios
         .get("/posts")
         .then((response) => {
@@ -60,6 +60,15 @@ export default {
         .catch((err) => {
           console.log("post", err);
         });
+    };
+
+    onMounted(() => {
+      getPostList();
+      window.navigator.serviceWorker.addEventListener("message", (event) => {
+        if (event.data.action === "showPostList") {
+          getPostList();
+        }
+      });
     });
 
     return {
